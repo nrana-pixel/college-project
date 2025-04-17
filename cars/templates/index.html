@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Hero Banner -->
+<section class="hero bg-dark text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Welcome to Elite Car Dealership</h1>
+        <p class="lead">Discover our exclusive collection of luxury and Formula 1 cars.</p>
+        <a href="{% url 'car_list' %}" class="btn btn-primary btn-lg">Browse Inventory</a>
+    </div>
+</section>
+
+<!-- Search Bar -->
+<section class="search-section py-4">
+    <div class="container">
+        <form method="get" action="{% url 'car_list' %}" class="d-flex justify-content-center">
+            <input type="text" name="search" class="form-control w-50" placeholder="Search cars by make or model..." aria-label="Search">
+            <button type="submit" class="btn btn-outline-primary ms-2">Search</button>
+        </form>
+    </div>
+</section>
+
+<!-- Featured Cars Carousel -->
+<section class="featured-cars py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Featured Cars</h2>
+        <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for car in featured_cars %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                {% if car.carimage_set.first %}
+                                <img src="{{ car.carimage_set.first.image.url }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
+                                {% else %}
+                                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="No image available">
+                                {% endif %}
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
+                                    <p class="card-text">{{ car.year }} | ${{ car.price }}</p>
+                                    <a href="{% url 'car_detail' car.id %}" class="btn btn-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center">No featured cars available.</p>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Formula 1 Spotlight -->
+<!-- Formula 1 Spotlight Section -->
+<section class="formula1-spotlight py-5 bg-dark">
+    <div class="container">
+        <h2 class="text-center mb-4 text-light">Formula 1 Legends</h2>
+        <div class="row">
+            {% for car in formula1_cars %}
+            <div class="col-md-4 mb-4">
+                <div class="card bg-dark text-light border-light">
+                    {% if car.carimage_set.first %}
+                    <img src="{{ car.carimage_set.first.image.url }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="No image available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
+                        <p class="card-text">{{ car.year }} | ${{ car.price }}</p>
+                        <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-light">Explore</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-light">No Formula 1 cars available.</p>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'car_list' %}?category=Formula%201" class="btn btn-primary">View All Formula 1 Cars</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

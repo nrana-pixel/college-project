@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Our Cars</h1>
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="card p-3">
+                <h5>Filters</h5>
+                <form method="get">
+                    <div class="mb-3">
+                        <label for="search" class="form-label">Search</label>
+                        <input type="text" name="search" class="form-control" placeholder="Make or Model" value="{{ search }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="">All</option>
+                            {% for category in categories %}
+                            <option value="{{ category.name }}" {% if category.name == request.GET.category %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sort" class="form-label">Sort By</label>
+                        <select name="sort" class="form-select">
+                            <option value="">Default</option>
+                            <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                </form>
+            </div>
+        </div>
+        <!-- Car Grid -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row">
+                {% for car in cars %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if car.carimage_set.first %}
+                        <img src="{{ car.carimage_set.first.image.url }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="No image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
+                            <p class="card-text">{{ car.year }} | ${{ car.price }}</p>
+                            <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-light">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center">No cars found.</p>
+                {% endfor %}
+            </div>
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if cars.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ cars.previous_page_number }}&search={{ search }}&sort={{ sort }}">Previous</a></li>
+                    {% endif %}
+                    {% if cars.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ cars.next_page_number }}&search={{ search }}&sort={{ sort }}">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

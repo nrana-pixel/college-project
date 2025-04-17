@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-light">{{ car.make }} {{ car.model }} ({{ car.year }})</h1>
+    <div class="row">
+        <!-- Car Images Carousel -->
+        <div class="col-md-6">
+            {% if car.carimage_set.all %}
+            <div id="carCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for image in car.carimage_set.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ car.make }} {{ car.model }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            {% else %}
+            <img src="https://via.placeholder.com/400x200" class="img-fluid" alt="No image available">
+            {% endif %}
+        </div>
+        <!-- Car Details Card -->
+        <div class="col-md-6">
+            <div class="card bg-dark text-light border-light">
+                <div class="card-body">
+                    <h5 class="card-title">Details</h5>
+                    <ul class="list-group list-group-flush bg-dark">
+                        <li class="list-group-item bg-dark text-light">Price: ${{ car.price }}</li>
+                        <li class="list-group-item bg-dark text-light">Mileage: {{ car.mileage }} miles</li>
+                        <li class="list-group-item bg-dark text-light">Color: {{ car.color }}</li>
+                        <li class="list-group-item bg-dark text-light">Description: {{ car.description }}</li>
+                    </ul>
+                    <a href="{% url 'contact' %}?car_id={{ car.id }}" class="btn btn-primary mt-3">Contact about this car</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Related Cars Section -->
+    <h2 class="mt-5 text-light">Related Cars</h2>
+    <div class="row">
+        {% for related_car in related_cars %}
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-light border-light">
+                {% if related_car.carimage_set.first %}
+                <img src="{{ related_car.carimage_set.first.image.url }}" class="card-img-top" alt="{{ related_car.make }} {{ related_car.model }}">
+                {% else %}
+                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="No image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ related_car.make }} {{ related_car.model }}</h5>
+                    <p class="card-text">{{ related_car.year }} | ${{ related_car.price }}</p>
+                    <a href="{% url 'car_detail' related_car.id %}" class="btn btn-outline-light">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-light">No related cars available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
